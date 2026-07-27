@@ -1,388 +1,1212 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ms">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>EGERAK — KEBERADAAN PEGAWAI (SEKTOR PENGURUSAN SEKOLAH) • PPD KOTA MARUDU</title>
-  <meta name="description" content="Paparan langsung keberadaan Kakitangan Sektor Pengurusan Sekolah PPD Kota Marudu untuk skrin TV." />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Forum Remaja Madani</title>
   <style>
-    :root{
-      --bg:#0b1020; --card:#121939; --muted:#1a224a; --text:#e8ecff; --text-dim:#b8c0ff;
-      --ok:#10b981; --away:#f59e0b; --meet:#3b82f6; --off:#ef4444; --travel:#8b5cf6;
+    :root {
+      --ink: #152238;
+      --muted: #5d6b7d;
+      --cream: #fff8e7;
+      --paper: #fffef9;
+      --teal: #0f8b8d;
+      --coral: #f25f5c;
+      --lemon: #ffe66d;
+      --blue: #226fbb;
+      --green: #3bb273;
+      --line: rgba(21, 34, 56, .15);
+      --shadow: 0 20px 50px rgba(21, 34, 56, .13);
     }
-   html, body { height: 100%; margin:0; padding:0; font-size:18px; }
-.min-h-screen { min-height:100vh; }
-    body{background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}
-    .glass{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); backdrop-filter: blur(6px); border:1px solid rgba(255,255,255,0.04)}
-    .shadow-soft{box-shadow:0 8px 24px rgba(2,6,23,.6)}
-    .ticker-mask{mask-image:linear-gradient(180deg, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%)}
-    .small-muted{color:var(--text-dim);font-size:13px}
-    a.link{color:var(--text-dim);text-decoration:underline}
-    /* simple responsive tweaks */
-    @media (min-width:1024px){.max-w-app{max-width:1200px}}
-    .badge {font-size:11px;padding:4px 8px;border-radius:999px}
-    /* alert */
-    #alert{display:none}
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      background:
+        linear-gradient(90deg, rgba(34, 111, 187, .08) 1px, transparent 1px),
+        linear-gradient(rgba(34, 111, 187, .08) 1px, transparent 1px),
+        var(--cream);
+      background-size: 34px 34px;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .page {
+      overflow: hidden;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px clamp(16px, 5vw, 56px);
+      border-bottom: 3px solid var(--ink);
+      background: rgba(255, 248, 231, .92);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      min-width: 210px;
+    }
+
+    .brand-badge {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      color: var(--paper);
+      background: var(--coral);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .links a,
+    .pill-btn {
+      min-height: 38px;
+      padding: 9px 14px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      color: var(--ink);
+      background: var(--paper);
+      font-weight: 900;
+      text-decoration: none;
+      box-shadow: 3px 3px 0 var(--ink);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .links a:hover,
+    .pill-btn:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    .hero {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, .95fr);
+      gap: clamp(24px, 5vw, 64px);
+      align-items: center;
+      min-height: calc(100vh - 74px);
+      padding: clamp(34px, 6vw, 78px) clamp(18px, 6vw, 72px) 42px;
+    }
+
+    .blob {
+      position: absolute;
+      border: 3px solid var(--ink);
+      border-radius: 28px;
+      transform: rotate(-8deg);
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    .blob.one {
+      right: -42px;
+      top: 92px;
+      width: 170px;
+      height: 92px;
+      background: var(--lemon);
+    }
+
+    .blob.two {
+      left: -36px;
+      bottom: 80px;
+      width: 124px;
+      height: 124px;
+      background: var(--green);
+      border-radius: 50%;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 8px 12px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: var(--lemon);
+      font-weight: 900;
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 9ch;
+      margin-bottom: 18px;
+      font-size: clamp(3.4rem, 10vw, 8.7rem);
+      line-height: .84;
+      text-transform: uppercase;
+    }
+
+    .hero-copy {
+      max-width: 620px;
+      margin-bottom: 24px;
+      color: #334155;
+      font-size: clamp(1.06rem, 2vw, 1.28rem);
+      line-height: 1.55;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .primary {
+      color: var(--paper);
+      background: var(--teal);
+    }
+
+    .hero-card {
+      position: relative;
+      padding: clamp(18px, 4vw, 30px);
+      border: 4px solid var(--ink);
+      border-radius: 26px;
+      background: var(--paper);
+      box-shadow: 14px 14px 0 var(--ink);
+      transform: rotate(2deg);
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 18px -18px auto auto;
+      width: 82px;
+      height: 82px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      background: var(--coral);
+      transform: translateY(-70%) rotate(12deg);
+    }
+
+    .phone {
+      overflow: hidden;
+      border: 3px solid var(--ink);
+      border-radius: 22px;
+      background: #e7fbf6;
+    }
+
+    .phone-top {
+      display: flex;
+      justify-content: center;
+      padding: 10px;
+      border-bottom: 3px solid var(--ink);
+      background: var(--blue);
+    }
+
+    .speaker {
+      width: 80px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--paper);
+    }
+
+    .phone-body {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+    }
+
+    .mini-topic {
+      padding: 14px;
+      border: 2px solid var(--ink);
+      border-radius: 16px;
+      background: var(--paper);
+      box-shadow: 4px 4px 0 rgba(21, 34, 56, .95);
+    }
+
+    .mini-topic strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .mini-topic span {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .section {
+      padding: clamp(44px, 7vw, 84px) clamp(18px, 6vw, 72px);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin: 0 auto 28px;
+      width: min(1180px, 100%);
+    }
+
+    .section h2 {
+      margin-bottom: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: .95;
+      text-transform: uppercase;
+    }
+
+    .section-note {
+      max-width: 430px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .objective-band {
+      border-top: 4px solid var(--ink);
+      border-bottom: 4px solid var(--ink);
+      background: var(--teal);
+    }
+
+    .objective-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+
+    .objective {
+      min-height: 190px;
+      padding: 22px;
+      border: 3px solid var(--ink);
+      border-radius: 22px;
+      background: var(--paper);
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    .objective .num {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      color: var(--paper);
+      background: var(--coral);
+      font-weight: 900;
+    }
+
+    .objective h3 {
+      margin-bottom: 8px;
+      font-size: 1.28rem;
+    }
+
+    .objective p {
+      margin-bottom: 0;
+      color: #405066;
+      line-height: 1.45;
+    }
+
+    .forum-wrap {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 170px 150px;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding: 16px;
+      border: 3px solid var(--ink);
+      border-radius: 22px;
+      background: var(--lemon);
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      color: var(--ink);
+      background: var(--paper);
+      outline: none;
+    }
+
+    input,
+    select {
+      height: 46px;
+      padding: 0 14px;
+    }
+
+    textarea {
+      min-height: 120px;
+      padding: 14px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      box-shadow: 0 0 0 4px rgba(15, 139, 141, .22);
+    }
+
+    .forum-grid {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .categories,
+    .rules,
+    .topic-card,
+    .composer {
+      border: 3px solid var(--ink);
+      border-radius: 22px;
+      background: var(--paper);
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    .categories {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+      position: sticky;
+      top: 92px;
+    }
+
+    .cat-btn {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px;
+      border: 2px solid var(--ink);
+      border-radius: 16px;
+      color: var(--ink);
+      background: #fff;
+      text-align: left;
+      font-weight: 900;
+    }
+
+    .cat-btn.active {
+      background: var(--coral);
+      color: var(--paper);
+    }
+
+    .cat-icon {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: var(--lemon);
+      color: var(--ink);
+    }
+
+    .count {
+      opacity: .82;
+    }
+
+    .topic-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .topic-card {
+      display: grid;
+      grid-template-columns: 70px minmax(0, 1fr) 120px;
+      gap: 16px;
+      padding: 18px;
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      color: var(--paper);
+      background: var(--blue);
+      font-weight: 900;
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .badge {
+      padding: 5px 10px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: var(--lemon);
+      font-size: .82rem;
+      font-weight: 900;
+    }
+
+    .badge.hot {
+      color: var(--paper);
+      background: var(--coral);
+    }
+
+    .topic-card h3 {
+      margin-bottom: 8px;
+      font-size: clamp(1.18rem, 2vw, 1.52rem);
+      line-height: 1.18;
+    }
+
+    .topic-card p {
+      margin-bottom: 12px;
+      color: #405066;
+      line-height: 1.48;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-size: .92rem;
+      font-weight: 700;
+    }
+
+    .topic-stats {
+      display: grid;
+      gap: 8px;
+      align-content: center;
+    }
+
+    .stat {
+      padding: 10px;
+      border: 2px solid var(--ink);
+      border-radius: 16px;
+      background: #e7fbf6;
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: .76rem;
+    }
+
+    .empty {
+      padding: 30px;
+      border: 3px dashed var(--ink);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, .68);
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .join-band {
+      border-top: 4px solid var(--ink);
+      border-bottom: 4px solid var(--ink);
+      background: var(--coral);
+    }
+
+    .join-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(320px, 1.1fr);
+      gap: 22px;
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    .rules {
+      padding: 22px;
+      background: var(--lemon);
+    }
+
+    .rules h2,
+    .composer h2 {
+      margin-bottom: 14px;
+      font-size: clamp(1.8rem, 4vw, 3.2rem);
+      line-height: .95;
+      text-transform: uppercase;
+    }
+
+    .rules ul {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding-left: 20px;
+      color: #324158;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .composer {
+      padding: 22px;
+      background: var(--paper);
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      font-weight: 900;
+    }
+
+    .form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+      justify-content: flex-end;
+    }
+
+    .submit-status {
+      min-height: 24px;
+      margin: 12px 0 0;
+      color: var(--ink);
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .submit-status.ok {
+      color: #0b6b43;
+    }
+
+    .submit-status.error {
+      color: #a22626;
+    }
+
+    .footer {
+      padding: 24px clamp(18px, 6vw, 72px);
+      border-top: 4px solid var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+      text-align: center;
+      font-weight: 900;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .join-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-card {
+        transform: none;
+      }
+
+      h1 {
+        max-width: 10ch;
+      }
+
+      .objective-grid,
+      .forum-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .categories {
+        position: static;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .links {
+        justify-content: flex-start;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .topic-card {
+        grid-template-columns: 56px minmax(0, 1fr);
+      }
+
+      .avatar {
+        width: 52px;
+        height: 52px;
+      }
+
+      .topic-stats {
+        grid-column: 1 / -1;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .section-head {
+        display: grid;
+      }
+    }
+
+    @media (max-width: 460px) {
+      h1 {
+        font-size: 3.15rem;
+      }
+
+      .links a,
+      .pill-btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .objective,
+      .topic-card,
+      .categories,
+      .rules,
+      .composer,
+      .toolbar {
+        box-shadow: 5px 5px 0 var(--ink);
+      }
+    }
+.ai-answer{
+    margin-top:15px;
+    padding:15px;
+    background:#f5f9ff;
+    border-left:5px solid #2563eb;
+    border-radius:10px;
+}
+
+.ai-answer h4{
+    margin:0 0 8px;
+    color:#2563eb;
+    font-size:16px;
+}
+
+.ai-content{
+    color:#333;
+    line-height:1.7;
+    white-space:pre-wrap;
+}
   </style>
 </head>
 <body>
-  <div class="min-h-screen flex flex-col items-center py-6">
-    <div class="w-full px-4 max-w-app">
-      <!-- Header -->
-      <header class="glass shadow-soft rounded-2xl p-4 mb-4 flex items-center gap-4">
-        <img id="logo-left" src="" alt="Logo Kiri" class="h-12 w-12 object-contain hidden"/>
-        <div class="flex-1">
-          <div class="flex items-center gap-3">
-            <div class="relative inline-flex items-center justify-center">
-              <span class="absolute inline-flex h-3 w-3 rounded-full bg-[var(--ok)] animate-pulse -top-1 -right-1"></span>
-              <span class="h-2.5 w-2.5 rounded-full bg-[var(--ok)]"></span>
-            </div>
-            <div>
-              <h1 class="text-lg md:text-2xl font-semibold tracking-wide uppercase" style="color:#10b981;">
-  EGERAK — KEBERADAAN PEGAWAI
-</h1>
-              <div class="small-muted">Sektor Pengurusan Sekolah • PPD Kota Marudu</div>
-            </div>
-          </div>
-        </div>
-        <div class="text-right">
-          <div id="clock" class="font-mono text-base md:text-lg"></div>
-          <div id="updated" class="small-muted">—</div>
-        </div>
-        <img id="logo-right" src="" alt="Logo Kanan" class="h-12 w-12 object-contain hidden"/>
-      </header>
+  <div class="page">
+    <header class="nav">
+      <div class="brand">
+        <span class="brand-badge">RM</span>
+        <span>Forum Remaja Madani</span>
+      </div>
+      <nav class="links" aria-label="Navigasi utama">
+        <a href="#objektif">Objektif</a>
+        <a href="#forum">Forum</a>
+        <a href="#sertai">Sertai</a>
+      </nav>
+    </header>
 
-      <!-- ALERT (visible on fetch errors) -->
-      <div id="alert" class="glass rounded-lg p-3 mb-4 border-l-4 border-yellow-400 text-sm">
-        <strong id="alert-title" class="font-semibold">Amaran:</strong>
-        <div id="alert-text" class="text-sm mt-1"></div>
-        <div class="mt-2 text-xs small-muted">Jika anda menggunakan Google Apps Script, pastikan anda telah <em>Deploy &gt; New deployment</em> sebagai Web app dengan akses "Anyone" (atau buat endpoint yang menyokong CORS).</div>
+    <section class="hero">
+      <span class="blob one" aria-hidden="true"></span>
+      <span class="blob two" aria-hidden="true"></span>
+      <div>
+        <div class="eyebrow">Suara belia berilmu dan beradab</div>
+        <h1>Forum Remaja Madani</h1>
+        <p class="hero-copy">Ruang perbincangan remaja tentang isu kepimpinan, kecerdasan digital, nilai Madani dan persediaan mendepani masa depan pendidikan.</p>
+        <div class="hero-actions">
+          <a class="pill-btn primary" href="#forum">Lihat Topik</a>
+          <a class="pill-btn" href="#sertai">Tulis Perbincangan</a>
+        </div>
       </div>
 
-      <!-- Controls -->
-      <div class="flex items-center justify-between gap-3 mb-4">
-        <div class="flex items-center gap-2 small-muted">
-          <label class="flex items-center gap-2">Sumber data:
-            <input id="srcInput" class="bg-slate-800/40 rounded px-2 py-1 w-96" placeholder="Masukkan URL endpoint (atau kosongkan untuk demo)">
-          </label>
-          <button id="applySrcBtn" class="px-3 py-1 rounded bg-[var(--meet)] text-white">Terapkan</button>
-          <button id="useDemo" class="px-3 py-1 rounded bg-slate-700 text-white">Guna Demo</button>
+      <div class="hero-card" aria-label="Pratonton forum">
+        <div class="phone">
+          <div class="phone-top"><span class="speaker"></span></div>
+          <div class="phone-body">
+            <div class="mini-topic"><strong>Kepimpinan</strong><span>Remaja sebagai pemimpin perubahan</span></div>
+            <div class="mini-topic"><strong>Digital</strong><span>Bijak menilai maklumat dan AI</span></div>
+            <div class="mini-topic"><strong>Pendidikan</strong><span>Kemahiran masa depan pelajar</span></div>
+          </div>
         </div>
-        <div class="small-muted">Auto-refresh: <span id="refreshMs">60s</span> · <button id="reloadBtn" class="underline">Segarkan sekarang</button></div>
+      </div>
+    </section>
+
+    <section class="section objective-band" id="objektif">
+      <div class="section-head">
+        <h2>Objektif Forum</h2>
+        <p class="section-note">Direka seperti laman Canva yang terang, padat dan mudah dibentangkan untuk program pelajar, kelab, bengkel atau sekolah.</p>
+      </div>
+      <div class="objective-grid">
+        <article class="objective">
+          <span class="num">1</span>
+          <h3>Membina Kepimpinan</h3>
+          <p>Remaja boleh membincangkan gaya kepimpinan berintegriti, empati, tanggungjawab dan keberanian membuat keputusan.</p>
+        </article>
+        <article class="objective">
+          <span class="num">2</span>
+          <h3>Memupuk Kecerdasan Digital</h3>
+          <p>Forum menggalakkan perbincangan tentang etika teknologi, keselamatan siber, AI, media sosial dan literasi maklumat.</p>
+        </article>
+        <article class="objective">
+          <span class="num">3</span>
+          <h3>Bersedia Untuk Masa Depan</h3>
+          <p>Peserta boleh meneroka kemahiran, nilai dan strategi pembelajaran yang diperlukan dalam dunia pendidikan masa hadapan.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="forum">
+      <div class="section-head">
+        <h2>Ruang Forum</h2>
+        <p class="section-note">Cari topik, pilih kategori, atau susun mengikut topik terkini dan paling aktif.</p>
       </div>
 
-      <!-- Main -->
-      <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- List -->
-        <section class="lg:col-span-2 glass rounded-2xl p-4 shadow-soft">
-          <div class="flex items-center justify-between mb-3">
-            <h2 class="text-lg font-semibold tracking-wide">Senarai Staf</h2>
-            <div class="flex items-center gap-3 text-xs small-muted">
-              <div class="inline-flex items-center gap-1"><span class="h-2 w-2 rounded-full bg-[var(--ok)]"></span>Hadir</div>
-              <div class="inline-flex items-center gap-1"><span class="h-2 w-2 rounded-full bg-[var(--meet)]"></span>Mesyuarat</div>
-              <div class="inline-flex items-center gap-1"><span class="h-2 w-2 rounded-full bg-[var(--away)]"></span>Tugasan Luar</div>
-              <div class="inline-flex items-center gap-1"><span class="h-2 w-2 rounded-full bg-[var(--travel)]"></span>Outstation</div>
-              <div class="inline-flex items-center gap-1"><span class="h-2 w-2 rounded-full bg-[var(--off)]"></span>Cuti/Tiada</div>
-            </div>
-          </div>
+      <div class="forum-wrap">
+        <div class="toolbar">
+          <input id="searchInput" type="search" placeholder="Cari topik kepimpinan, digital atau pendidikan..." aria-label="Cari topik">
+          <select id="categorySelect" aria-label="Pilih kategori"></select>
+          <select id="sortSelect" aria-label="Susun topik">
+            <option value="latest">Terkini</option>
+            <option value="popular">Paling aktif</option>
+            <option value="answered">Telah dijawab</option>
+          </select>
+        </div>
 
-          <div id="list-viewport" class="relative overflow-hidden ticker-mask" style="height:62vh">
-            <div id="list-track" class="space-y-2 pb-10"></div>
-          </div>
-        </section>
+        <div class="forum-grid">
+          <aside class="categories" id="categoryList" aria-label="Kategori forum"></aside>
+          <main class="topic-list" id="topicList" aria-live="polite"></main>
+        </div>
+      </div>
+    </section>
 
-        <!-- Stats & Chart -->
-        <aside class="glass rounded-2xl p-4 shadow-soft">
-          <h2 class="text-lg font-semibold tracking-wide mb-3">Statistik Hari Ini</h2>
-          <div class="grid grid-cols-3 gap-3 mb-4" id="stat-pills"></div>
-          <div class="h-64 bg-[var(--card)] rounded-xl p-3">
-            <canvas id="chart" height="240"></canvas>
-          </div>
-
-          <div class="mt-4 text-xs small-muted space-y-1">
-            <div>Ditapis kepada: <strong>Sektor Pengurusan Sekolah</strong></div>
-            <div>Sumber data: <span id="data-origin">—</span></div>
-          </div>
+    <section class="section join-band" id="sertai">
+      <div class="join-grid">
+        <aside class="rules">
+          <h2>Etika Forum</h2>
+          <ul>
+            <li>Gunakan bahasa sopan dan hormati pandangan rakan.</li>
+            <li>Nyatakan isu, kategori atau persoalan dengan jelas.</li>
+            <li>Elakkan menyebarkan maklumat yang belum disahkan, terutama isu digital dan media sosial.</li>
+            <li>Beri pandangan yang membina, berfakta dan selari dengan nilai Madani.</li>
+          </ul>
         </aside>
-      </main>
 
-      <footer class="text-[12px] small-muted mt-6">Tip: Tekan <kbd>F11</kbd> untuk mod skrin penuh. Gunakan parameter <code>?src=</code> untuk tukar URL data tanpa ubah kod.</footer>
-    </div>
+        <form class="composer" id="topicForm">
+          <h2>Hantar Topik</h2>
+          <div class="form-grid">
+            <label>
+              Nama
+              <input id="nameField" required maxlength="60" placeholder="Contoh: Nur Aina binti Ahmad">
+            </label>
+            <label>
+              Sekolah
+              <input id="schoolField" required maxlength="90" placeholder="Contoh: SMK Seri Madani">
+            </label>
+            <label>
+              Tajuk Perbincangan
+              <input id="titleField" required maxlength="90" placeholder="Contoh: Bagaimana remaja boleh memimpin dengan berintegriti?">
+            </label>
+            <label>
+              Kategori
+              <select id="formCategory" required></select>
+            </label>
+            <label>
+              Isi Perbincangan
+              <textarea id="bodyField" required maxlength="280" placeholder="Tulis isu, cadangan, pandangan atau pengalaman anda..."></textarea>
+            </label>
+          </div>
+          <div class="form-actions">
+            <button class="pill-btn" type="reset">Kosongkan</button>
+            <button class="pill-btn primary" type="submit">Hantar Topik</button>
+          </div>
+          <p class="submit-status" id="submitStatus" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <footer class="footer">Forum Remaja Madani • Kepimpinan • Kecerdasan Digital • Masa Depan Pendidikan</footer>
   </div>
 
   <script>
-  // ===================== CONFIG =====================
-  const CONFIG = {
-    // default empty -> demo data used
-    DATA_URL: "https://script.google.com/macros/s/AKfycby7QUw9sE1FnvuPMmWOaMsj8ATCkdScUh7ml-3xUySSRy_1ksyRbNfKAzcQuDQ618w-/exec",
-    REFRESH_MS: 60_000,
-    SCROLL_SPEED: 0.5, // pixels per frame
-    TARGET_SEKTOR: "Sektor Pengurusan Sekolah",
-    MAP: {
-      nama: ["Nama","name","nama","full name","pegawai"],
-      jawatan: ["Jawatan","jawatan","position","fungsi"],
-      unit: ["Sektor","Unit","unit","sektor","bahagian"],
-      status: ["Status","status","kehadiran","attendance"],
-      masa: ["Masa","Timestamp","updatedAt","masa","waktu","time"],
-      foto: ["Foto","Gambar","photo","image","foto"]
+    const categories = [
+      { id: "semua", label: "Semua", icon: "★" },
+      { id: "Kepimpinan", label: "Kepimpinan", icon: "K" },
+      { id: "Digital", label: "Digital", icon: "D" },
+      { id: "Pendidikan", label: "Pendidikan", icon: "P" },
+      { id: "Madani", label: "Madani", icon: "M" },
+      { id: "Masa Depan", label: "Masa Depan", icon: "F" }
+    ];
+
+    const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbw8tww7FFO6vcct8HCeQI9lHhkzaP8jOqAnxRpQVLPM0luysz_e-La67FlZK-cmW_nU/exec";
+    const GOOGLE_SHEET_ID = "17EFQRecLkYN2Ke57Y1IEpSNTMwjObAfz2r5w4JSRZYE";
+    const GOOGLE_SHEET_READ_URL = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json&t=${Date.now()}`;
+    let topics = [];
+    let isLoadingTopics = true;
+    let currentCategory = "semua";
+
+    const categoryList = document.getElementById("categoryList");
+    const categorySelect = document.getElementById("categorySelect");
+    const formCategory = document.getElementById("formCategory");
+    const topicList = document.getElementById("topicList");
+    const searchInput = document.getElementById("searchInput");
+    const sortSelect = document.getElementById("sortSelect");
+    const topicForm = document.getElementById("topicForm");
+    const submitStatus = document.getElementById("submitStatus");
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[char]);
     }
-  };
 
-  // read ?src= query param
-  const params = new URLSearchParams(location.search);
-  const srcParam = params.get('src');
-  if (srcParam) CONFIG.DATA_URL = srcParam;
+    function categoryCount(id) {
+      return id === "semua" ? topics.length : topics.filter(topic => topic.category === id).length;
+    }
 
-  // DOM refs
-  const alertEl = document.getElementById('alert');
-  const alertTextEl = document.getElementById('alert-text');
-  const alertTitleEl = document.getElementById('alert-title');
-  const dataOriginEl = document.getElementById('data-origin');
-  const updatedEl = document.getElementById('updated');
-  const clockEl = document.getElementById('clock');
-  const listTrack = document.getElementById('list-track');
-  const viewport = document.getElementById('list-viewport');
-  const statPills = document.getElementById('stat-pills');
-  const chartCanvas = document.getElementById('chart');
-  const srcInput = document.getElementById('srcInput');
-  const applySrcBtn = document.getElementById('applySrcBtn');
-  const useDemoBtn = document.getElementById('useDemo');
-  const reloadBtn = document.getElementById('reloadBtn');
-  const refreshMsEl = document.getElementById('refreshMs');
+    function renderCategoryControls() {
+      categoryList.innerHTML = categories.map(category => `
+        <button class="cat-btn ${category.id === currentCategory ? "active" : ""}" type="button" data-category="${category.id}">
+          <span class="cat-icon">${category.icon}</span>
+          <span>${category.label}</span>
+          <span class="count">${categoryCount(category.id)}</span>
+        </button>
+      `).join("");
 
-  srcInput.value = CONFIG.DATA_URL;
-  refreshMsEl.textContent = Math.round(CONFIG.REFRESH_MS/1000) + 's';
+      categorySelect.innerHTML = categories.map(category => `
+        <option value="${category.id}" ${category.id === currentCategory ? "selected" : ""}>${category.label}</option>
+      `).join("");
 
-  // clock
-  setInterval(()=>{
-    clockEl.textContent = new Date().toLocaleString('ms-MY', { hour12:false, weekday:'short', day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' });
-  },1000);
+      formCategory.innerHTML = categories
+        .filter(category => category.id !== "semua")
+        .map(category => `<option value="${category.id}">${category.label}</option>`)
+        .join("");
+    }
 
-  // ===================== UTIL =====================
-  function showAlert(title, text){
-    alertTitleEl.textContent = title;
-    alertTextEl.textContent = text;
-    alertEl.style.display = 'block';
-  }
-  function hideAlert(){ alertEl.style.display = 'none'; }
+    function timeAgo(minutes) {
+      if (minutes < 60) return `${minutes} min lalu`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours} jam lalu`;
+      return `${Math.floor(hours / 24)} hari lalu`;
+    }
 
-  function timeoutFetch(url, ms=15000){
-    const ctrl = new AbortController();
-    const id = setTimeout(()=>ctrl.abort(), ms);
-    return fetch(url, {signal: ctrl.signal, cache:'no-store'}).finally(()=>clearTimeout(id));
-  }
+    function filteredTopics() {
+      const search = searchInput.value.trim().toLowerCase();
+      let list = topics.filter(topic => {
+        const matchesCategory = currentCategory === "semua" || topic.category === currentCategory;
+        const text = `${topic.title} ${topic.category} ${topic.author} ${topic.school || ""} ${topic.body}`.toLowerCase();
+        return matchesCategory && text.includes(search);
+      });
 
-  async function fetchJSON(url){
-    try{
-      const res = await timeoutFetch(url, 15000);
-      if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
-      const contentType = res.headers.get('content-type') || '';
-      if (contentType.includes('application/json') || contentType.includes('text/json')) return await res.json();
-      // try text then JSON.parse
-      const txt = await res.text();
-      try{ return JSON.parse(txt); } catch(e){ throw new Error('Response not JSON'); }
-    }catch(e){ throw e; }
-  }
-
-  function coerceArray(payload){
-    if (!payload) return [];
-    // already array of objects
-    if (Array.isArray(payload)){
-      if (payload.length === 0) return [];
-      if (typeof payload[0] === 'object' && !Array.isArray(payload[0])) return payload;
-      // if array of arrays -> treat first row as headers
-      if (Array.isArray(payload[0])){
-        const headers = payload[0];
-        return payload.slice(1).map(row => {
-          const obj = {};
-          for (let i=0;i<headers.length;i++) obj[headers[i] ?? i] = row[i];
-          return obj;
-        });
+      if (sortSelect.value === "popular") {
+        list = list.sort((a, b) => (b.views + b.replies) - (a.views + a.replies));
+      } else if (sortSelect.value === "answered") {
+        list = list.sort((a, b) => Number(b.answered) - Number(a.answered));
+      } else {
+        list = list.sort((a, b) => a.minutes - b.minutes);
       }
+
+      return list;
     }
-    // objects with value arrays (Google sheets / Sheets API)
-    if (payload.values && Array.isArray(payload.values)){
-      const headers = payload.values[0] || [];
-      return (payload.values.slice(1) || []).map(row => {
-        const obj = {};
-        for (let i=0;i<headers.length;i++) obj[headers[i] ?? i] = row[i];
-        return obj;
+
+    function renderTopics() {
+      if (isLoadingTopics) {
+        topicList.innerHTML = '<div class="empty">Sedang mengambil data daripada Google Sheet...</div>';
+        return;
+      }
+
+      const list = filteredTopics();
+      if (!list.length) {
+        topicList.innerHTML = '<div class="empty">Tiada data dalam Google Sheet atau tiada topik yang sepadan dengan carian.</div>';
+        return;
+      }
+
+      topicList.innerHTML = list.map(topic => `
+        <article class="topic-card">
+          <div class="avatar" style="background:${topic.color}">${escapeHtml((topic.author || "RM").slice(0, 2).toUpperCase())}</div>
+          <div>
+            <div class="badges">
+              ${topic.hot ? '<span class="badge hot">Topik Hangat</span>' : ""}
+              <span class="badge">${escapeHtml(topic.category)}</span>
+              ${topic.answered ? '<span class="badge">Dijawab</span>' : '<span class="badge">Perlu Bantuan</span>'}
+            </div>
+            <h3>${escapeHtml(topic.title)}</h3>
+            <p>${escapeHtml(topic.body)}</p>
+            <div class="meta">
+              <span>Oleh ${escapeHtml(topic.author)}</span>
+              <span>Sekolah: ${escapeHtml(topic.school || "Tidak dinyatakan")}</span>
+              <span>${timeAgo(topic.minutes)}</span>
+            </div>
+          </div>
+          <div class="topic-stats">
+            <div class="stat">${topic.replies}<span>Balasan</span></div>
+            <div class="stat">${topic.views}<span>Paparan</span></div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function setCategory(id) {
+      currentCategory = id;
+      renderCategoryControls();
+      renderTopics();
+    }
+
+    function setSubmitStatus(message, type = "") {
+      submitStatus.textContent = message;
+      submitStatus.className = `submit-status ${type}`.trim();
+    }
+
+    function pick(row, keys, fallback = "") {
+      for (const key of keys) {
+        if (row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== "") {
+          return String(row[key]).trim();
+        }
+      }
+      return fallback;
+    }
+
+    function rowsFromSheetPayload(payload) {
+      const rawRows = Array.isArray(payload)
+        ? payload
+        : payload.data || payload.records || payload.rows || payload.values || [];
+
+      if (!Array.isArray(rawRows) || !rawRows.length) return [];
+      if (!Array.isArray(rawRows[0])) return rawRows;
+
+      const headers = rawRows[0].map(header => String(header).trim().toLowerCase());
+      return rawRows.slice(1).map(row => {
+        const item = {};
+        headers.forEach((header, index) => {
+          item[header] = row[index];
+        });
+        return item;
       });
     }
-    if (Array.isArray(payload.data)) return coerceArray(payload.data);
-    if (Array.isArray(payload.result)) return coerceArray(payload.result);
-    if (Array.isArray(payload.rows)) return coerceArray(payload.rows);
-    // if payload is object with key->array of objects (some Apps Script outputs)
-    for (const k of Object.keys(payload)){
-      if (Array.isArray(payload[k]) && payload[k].length>0 && typeof payload[k][0] === 'object') return payload[k];
+
+    function rowsFromGoogleVisualization(text) {
+      const jsonText = text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1);
+      const table = JSON.parse(jsonText).table;
+      const headers = table.cols.map((column, index) => {
+        const label = String(column.label || column.id || `column${index}`).trim().toLowerCase();
+        return label || `column${index}`;
+      });
+
+      return table.rows.map(row => {
+        const item = {};
+        headers.forEach((header, index) => {
+          const cell = row.c[index];
+          item[header] = cell ? (cell.f || cell.v || "") : "";
+        });
+        return item;
+      });
     }
-    return [];
-  }
 
-  function findValue(obj, candidates){
-    if (!obj) return undefined;
-    const keys = Object.keys(obj);
-    const normCandidates = candidates.map(s => (''+s).toLowerCase().trim());
-    // 1) exact or case-insensitive match
-    for (const k of keys){ const kl = k.toLowerCase().trim(); if (normCandidates.includes(kl)) return obj[k]; }
-    // 2) includes match
-    for (const k of keys){ const kl = k.toLowerCase(); for (const c of normCandidates) if (kl.includes(c) || c.includes(kl)) return obj[k]; }
-    // 3) try keys that when trimmed numbers match
-    return undefined;
-  }
+    async function readRowsFromAppsScript() {
+      const response = await fetch(`${SHEET_ENDPOINT}?t=${Date.now()}`);
+      if (!response.ok) throw new Error("Apps Script tidak memberi respons yang berjaya.");
+      return rowsFromSheetPayload(await response.json());
+    }
 
-  function normalizeRow(r){
-    const nama = findValue(r, CONFIG.MAP.nama) ?? findValue(r, ['nama','nama pegawai']) ?? '';
-    const jawatan = findValue(r, CONFIG.MAP.jawatan) ?? '';
-    const unit = findValue(r, CONFIG.MAP.unit || CONFIG.MAP.sektor) ?? findValue(r, CONFIG.MAP.unit) ?? '';
-    const status = findValue(r, CONFIG.MAP.status) ?? '';
-    const masa = findValue(r, CONFIG.MAP.masa) ?? '';
-    const foto = findValue(r, CONFIG.MAP.foto) ?? '';
-    return { nama: String(nama || '').trim(), jawatan: String(jawatan || '').trim(), unit: String(unit || '').trim(), status: String(status || '').trim(), masa: String(masa || '').trim(), foto: String(foto || '').trim() };
-  }
+    async function readRowsFromGoogleSheet() {
+      const response = await fetch(GOOGLE_SHEET_READ_URL);
+      if (!response.ok) throw new Error("Google Sheet tidak memberi respons yang berjaya.");
+      return rowsFromGoogleVisualization(await response.text());
+    }
 
-  function normalStatus(s){
-    if (!s) return 'Tidak Hadir';
-    s = (''+s).toLowerCase();
-    if (/(hadir|in office|onsite)/.test(s)) return 'Hadir';
-    if (/(mesyuarat|meeting)/.test(s)) return 'Mesyuarat';
-    if (/(tugasan luar|urusan luar|errand|outside)/.test(s)) return 'Tugasan Luar';
-    if (/(outstation|kursus|lawatan)/.test(s)) return 'Outstation';
-    if (/(cuti|mc|tidak hadir|absent)/.test(s)) return 'Cuti/Tiada';
-    return s.replace(/\b\w/g, c=>c.toUpperCase());
-  }
+    function minutesFromTimestamp(value, index) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return index + 1;
+      return Math.max(1, Math.round((Date.now() - date.getTime()) / 60000));
+    }
 
-  function statusColor(s){
-    return ({'Hadir':'var(--ok)','Mesyuarat':'var(--meet)','Tugasan Luar':'var(--away)','Outstation':'var(--travel)','Cuti/Tiada':'var(--off)'}[s]) || 'var(--muted)';
-  }
+    function normalizeTopic(row, index) {
 
-  // demo data
-  function demoData(){
-    const now = new Date();
-    const pad=(n)=>String(n).padStart(2,'0');
-    const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:00`;
-    return [
-      { Nama:'Nurul Aisyah', Jawatan:'PPD (SPS)', Sektor:'Sektor Pengurusan Sekolah', Status:'Hadir', Masa:ts },
-      { Nama:'Mohd Faiz', Jawatan:'Pen PPD', Sektor:'Sektor Pengurusan Sekolah', Status:'Mesyuarat', Masa:ts },
-      { Nama:'Joanne Lee', Jawatan:'Pembantu Tadbir', Sektor:'Sektor Pengurusan Sekolah', Status:'Tugasan Luar', Masa:ts },
-      { Nama:'Siti Rahmah', Jawatan:'Pegawai Meja', Sektor:'Sektor Pengurusan Sekolah', Status:'Outstation', Masa:ts },
-      { Nama:'Danny Fred', Jawatan:'Pemandu', Sektor:'Sektor Pengurusan Sekolah', Status:'Cuti', Masa:ts }
-    ];
-  }
+  const category = pick(row, ["kategori", "category"], "Madani");
 
-  // ===================== FETCH & LOAD =====================
-  let chart = null;
-  async function loadData(){
-    hideAlert();
-    let raw = null; let origin = 'Demo (local)';
-    if (CONFIG.DATA_URL){
-      try{
-        const json = await fetchJSON(CONFIG.DATA_URL);
-        raw = coerceArray(json);
-        origin = (new URL(CONFIG.DATA_URL)).host || CONFIG.DATA_URL;
-      }catch(e){
-        console.warn('Gagal ambil data — gunakan demo', e);
-        showAlert('Gagal muat data', 'Data tidak dapat dimuat dari sumber yang diberi. Menggunakan demo data sebagai gantian. Sila semak URL atau tetapan CORS. (Konsol mengandungi ralat terperinci)');
-        raw = demoData();
-        origin = 'Demo (fallback)';
+  return {
+
+    id: pick(row, ["id", "timestamp", "tarikh"], String(index + 1)),
+
+    title: pick(row, ["tajuk", "title", "topik"], "Topik tanpa tajuk"),
+
+    body: pick(row, ["isi", "body", "perbincangan", "komen"], "Tiada isi perbincangan."),
+
+    category,
+
+    author: pick(row, ["nama", "name", "author"], "Tanpa nama"),
+
+    school: pick(row, ["sekolah", "school"], "Tidak dinyatakan"),
+
+    // <<< TAMBAH BARIS INI >>>
+    jawapan_ai: pick(row, ["jawapan_ai"], ""),
+
+    replies: Number(pick(row, ["balasan", "replies"], "0")) || 0,
+
+    views: Number(pick(row, ["paparan", "views"], "1")) || 1,
+
+    minutes: minutesFromTimestamp(
+      pick(row, ["timestamp", "tarikh", "date"], ""),
+      index
+    ),
+
+    answered: pick(row, ["status", "dijawab", "answered"], "")
+      .toLowerCase()
+      .includes("jawab"),
+
+    hot: index < 2,
+
+    color: [
+      "#0f8b8d",
+      "#f25f5c",
+      "#226fbb",
+      "#3bb273",
+      "#152238"
+    ][index % 5]
+
+  };
+
+}
+
+    async function loadTopicsFromGoogleSheet() {
+      isLoadingTopics = true;
+      renderTopics();
+
+      try {
+        let rows = [];
+        try {
+          rows = await readRowsFromAppsScript();
+        } catch (scriptError) {
+          rows = await readRowsFromGoogleSheet();
+        }
+        topics = rows.map(normalizeTopic).filter(topic => topic.title || topic.body);
+        isLoadingTopics = false;
+        renderCategoryControls();
+        renderTopics();
+      } catch (error) {
+        topics = [];
+        isLoadingTopics = false;
+        renderCategoryControls();
+        topicList.innerHTML = '<div class="empty">Data Google Sheet belum dapat dibaca. Pastikan pautan Sheet dikongsi dengan akses pembaca atau Apps Script membenarkan GET JSON.</div>';
       }
-    } else {
-      raw = demoData(); origin = 'Demo (kosongkan DATA_URL)';
     }
 
-    const mapped = raw.map(normalizeRow);
-    const filtered = mapped.filter(r => (r.unit||'').toLowerCase().includes(CONFIG.TARGET_SEKTOR.toLowerCase()));
+    function sendToGoogleSheet(topic) {
+      const formData = new FormData();
+      formData.append("timestamp", new Date().toLocaleString("ms-MY"));
+      formData.append("nama", topic.author);
+      formData.append("sekolah", topic.school);
+      formData.append("kategori", topic.category);
+      formData.append("tajuk", topic.title);
+      formData.append("isi", topic.body);
+      formData.append("balasan", topic.replies);
+      formData.append("paparan", topic.views);
 
-    renderList(filtered);
-    renderStats(filtered);
-    renderChart(filtered);
+      return fetch(SHEET_ENDPOINT, {
+        method: "POST",
+        body: formData
+      });
+    }
 
-    dataOriginEl.textContent = origin;
-    updatedEl.textContent = 'Kemaskini: ' + new Date().toLocaleString('ms-MY', {hour12:false});
-  }
+    categoryList.addEventListener("click", event => {
+      const button = event.target.closest("[data-category]");
+      if (button) setCategory(button.dataset.category);
+    });
 
-  // ===================== RENDER LIST + AUTOSCROLL =====================
-  let animId = null, scrollY = 0;
-  function staffCard(p){
-    const col = statusColor(p.status);
-    const img = p.foto ? `<img src="${p.foto}" class="h-12 w-12 rounded-xl object-cover border border-white/10" alt="${p.nama}">` : `<div class="h-12 w-12 rounded-xl bg-[var(--muted)] grid place-items-center text-xs">No Img</div>`;
-    return `
-      <div class="glass rounded-xl p-3 flex items-center gap-3">
-        ${img}
-        <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-2">
-            <div class="truncate font-medium">${p.nama}</div>
-            <span class="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full" style="background:${col}20;border:1px solid ${col}40;color:${col};">
-              <span class="h-1.5 w-1.5 rounded-full" style="background:${col}"></span>${normalStatus(p.status)}
-            </span>
-          </div>
-          <div class="text-[12px] small-muted truncate">${p.jawatan} • ${p.unit}</div>
-        </div>
-        <div class="text-[11px] small-muted">${p.masa || '—'}</div>
-      </div>`;
-  }
+    categorySelect.addEventListener("change", event => setCategory(event.target.value));
+    searchInput.addEventListener("input", renderTopics);
+    sortSelect.addEventListener("change", renderTopics);
 
-  function renderList(arr){
-    cancelAnimationFrame(animId);
-    scrollY = 0;
-    listTrack.style.transform = `translateY(0px)`;
-    listTrack.innerHTML = arr.map(staffCard).join('') || `<div class='text-sm small-muted'>Tiada rekod untuk sektor ini.</div>`;
-    // clone content to make seamless scroll
-    const clone = document.createElement('div');
-    clone.innerHTML = listTrack.innerHTML;
-    Array.from(clone.children).forEach(ch => listTrack.appendChild(ch.cloneNode(true)));
-    startScroll();
-  }
+    topicForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      const author = document.getElementById("nameField").value.trim();
+      const school = document.getElementById("schoolField").value.trim();
+      const title = document.getElementById("titleField").value.trim();
+      const body = document.getElementById("bodyField").value.trim();
+      if (!author || !school || !title || !body) return;
 
-  function step(){
-    const trackHeight = listTrack.scrollHeight;
-    const viewH = viewport.clientHeight;
-    if (trackHeight <= viewH) { animId = requestAnimationFrame(step); return; }
-    scrollY += CONFIG.SCROLL_SPEED;
-    if (scrollY >= (trackHeight/2)) scrollY = 0;
-    listTrack.style.transform = `translateY(-${scrollY}px)`;
-    animId = requestAnimationFrame(step);
-  }
-  function startScroll(){ cancelAnimationFrame(animId); animId = requestAnimationFrame(step); }
-  function stopScroll(){ cancelAnimationFrame(animId); }
-  viewport.addEventListener('mouseenter', stopScroll);
-  viewport.addEventListener('mouseleave', startScroll);
+      const newTopic = {
+        id: Date.now(),
+        title,
+        body,
+        category: formCategory.value,
+        author,
+        school,
+        replies: 0,
+        views: 1,
+        minutes: 1,
+        answered: false,
+        hot: false,
+        color: "#0f8b8d",
+        custom: true
+      };
 
-  // ===================== STATS + CHART =====================
-  function renderStats(arr){
-    const counts = {'Hadir':0,'Mesyuarat':0,'Tugasan Luar':0,'Outstation':0,'Cuti/Tiada':0};
-    for (const r of arr) counts[normalStatus(r.status)] = (counts[normalStatus(r.status)]||0)+1;
-    statPills.innerHTML = Object.entries(counts).map(([k,v])=>{
-      const col = statusColor(k);
-      return `<div class="glass rounded-xl p-2 text-center">
-        <div class="text-[10px] mb-1" style="color:${col}">${k}</div>
-        <div class="text-2xl font-semibold">${v}</div>
-      </div>`;
-    }).join('');
-  }
+      const submitButton = topicForm.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      setSubmitStatus("Sedang menghantar data...");
 
-  function renderChart(arr){
-    const counts = ['Hadir','Mesyuarat','Tugasan Luar','Outstation','Cuti/Tiada'].map(k => arr.filter(r => normalStatus(r.status)===k).length);
-    const ctx = chartCanvas.getContext('2d');
-    const colors = [getComputedStyle(document.documentElement).getPropertyValue('--ok'), getComputedStyle(document.documentElement).getPropertyValue('--meet'), getComputedStyle(document.documentElement).getPropertyValue('--away'), getComputedStyle(document.documentElement).getPropertyValue('--travel'), getComputedStyle(document.documentElement).getPropertyValue('--off')];
-    if (chart) chart.destroy();
-    chart = new Chart(ctx, { type:'doughnut', data:{ labels:['Hadir','Mesyuarat','Tugasan Luar','Outstation','Cuti/Tiada'], datasets:[{ data:counts, backgroundColor:colors }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:'#cfd7ff' } } } } });
-  }
+      try {
+        await sendToGoogleSheet(newTopic);
+        currentCategory = "semua";
+        topicForm.reset();
+        await loadTopicsFromGoogleSheet();
+        setSubmitStatus("Berjaya dihantar. Data forum kini diambil semula daripada Google Sheet.", "ok");
+        document.getElementById("forum").scrollIntoView({ behavior: "smooth" });
+      } catch (error) {
+        setSubmitStatus("Data tidak dapat dihantar. Semak sambungan internet atau tetapan Google Script.", "error");
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
 
-  // ===================== UI EVENTS =====================
-  applySrcBtn.addEventListener('click', ()=>{
-    const v = srcInput.value.trim();
-    CONFIG.DATA_URL = v;
-    loadData();
-  });
-  useDemoBtn.addEventListener('click', ()=>{ CONFIG.DATA_URL = ''; srcInput.value = ''; loadData(); });
-  reloadBtn.addEventListener('click', ()=>{ loadData(); });
-
-  // init
-  loadData();
-  setInterval(()=>loadData(), CONFIG.REFRESH_MS);
+    renderCategoryControls();
+    loadTopicsFromGoogleSheet();
+ 
   </script>
 </body>
 </html>
