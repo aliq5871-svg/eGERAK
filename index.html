@@ -732,6 +732,43 @@
     line-height:1.7;
     white-space:pre-wrap;
 }
+.modal{
+
+display:none;
+
+position:fixed;
+
+inset:0;
+
+background:rgba(0,0,0,.45);
+
+justify-content:center;
+
+align-items:center;
+
+z-index:9999;
+
+}
+
+.modal-box{
+
+width:320px;
+
+background:#fff;
+
+padding:25px;
+
+border-radius:15px;
+
+border:3px solid #152238;
+
+}
+
+.modal-box input{
+
+margin-bottom:10px;
+
+}
   </style>
 </head>
 <body>
@@ -742,6 +779,16 @@
         <span>Forum Remaja Madani</span>
       </div>
       <nav class="links" aria-label="Navigasi utama">
+<button id="loginBtn" class="pill-btn" onclick="showLogin()">
+🔐 Login Admin
+</button>
+
+<button id="logoutBtn"
+class="pill-btn"
+style="display:none"
+onclick="logout()">
+🚪 Logout
+</button>
         <a href="#objektif">Objektif</a>
         <a href="#forum">Forum</a>
         <a href="#sertai">Sertai</a>
@@ -879,13 +926,59 @@
       { id: "Masa Depan", label: "Masa Depan", icon: "F" }
     ];
 
-    const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbw8tww7FFO6vcct8HCeQI9lHhkzaP8jOqAnxRpQVLPM0luysz_e-La67FlZK-cmW_nU/exec";
+    const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycby2DQ_3m41qqblklWzvqGxOMoCcWqmGTKzl6ixN_WUTaVOIik5rinznFPPVYhxac1sK/exec";
     const GOOGLE_SHEET_ID = "17EFQRecLkYN2Ke57Y1IEpSNTMwjObAfz2r5w4JSRZYE";
     const GOOGLE_SHEET_READ_URL = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json&t=${Date.now()}`;
     let topics = [];
     let isLoadingTopics = true;
     let currentCategory = "semua";
+let isAdmin = false;
 
+function showLogin(){
+
+document.getElementById("loginModal").style.display="flex";
+
+}
+
+function closeLogin(){
+
+document.getElementById("loginModal").style.display="none";
+
+}
+
+async function loginAdmin(){
+
+    const username = document.getElementById("adminUser").value;
+    const password = document.getElementById("adminPass").value;
+
+    if(username==="admin" && password==="admin123"){
+
+        isAdmin = true;
+
+        closeLogin();
+
+        document.getElementById("loginBtn").style.display="none";
+        document.getElementById("logoutBtn").style.display="inline-block";
+
+        renderTopics();
+
+    }else{
+
+        alert("Username atau Password salah");
+
+    }
+
+}
+function logout(){
+
+isAdmin=false;
+
+document.getElementById("loginBtn").style.display="inline-block";
+document.getElementById("logoutBtn").style.display="none";
+
+renderTopics();
+
+}
     const categoryList = document.getElementById("categoryList");
     const categorySelect = document.getElementById("categorySelect");
     const formCategory = document.getElementById("formCategory");
@@ -977,7 +1070,14 @@
             </div>
             <h3>${escapeHtml(topic.title)}</h3>
             <p>${escapeHtml(topic.body)}</p>
-            <div class="meta">
+${isAdmin && topic.jawapan_ai ? `
+<div class="ai-answer">
+    <h4>🤖 Jawapan AI (Admin Sahaja)</h4>
+    <div class="ai-content">
+        ${escapeHtml(topic.jawapan_ai)}
+    </div>
+</div>
+` : ""}            <div class="meta">
               <span>Oleh ${escapeHtml(topic.author)}</span>
               <span>Sekolah: ${escapeHtml(topic.school || "Tidak dinyatakan")}</span>
               <span>${timeAgo(topic.minutes)}</span>
@@ -987,6 +1087,25 @@
             <div class="stat">${topic.replies}<span>Balasan</span></div>
             <div class="stat">${topic.views}<span>Paparan</span></div>
           </div>
+${isAdmin ? `
+
+<div class="admin-tools">
+
+<button onclick="editTopic(${topic.row})">
+✏️ Edit
+</button>
+
+<button onclick="deleteTopic(${topic.row})">
+🗑 Padam
+</button>
+
+<button onclick="replyAI(${topic.row})">
+🤖 Jana AI
+</button>
+
+</div>
+
+` : ""}
         </article>
       `).join("");
     }
@@ -1136,22 +1255,26 @@
       }
     }
 
-    function sendToGoogleSheet(topic) {
-      const formData = new FormData();
-      formData.append("timestamp", new Date().toLocaleString("ms-MY"));
-      formData.append("nama", topic.author);
-      formData.append("sekolah", topic.school);
-      formData.append("kategori", topic.category);
-      formData.append("tajuk", topic.title);
-      formData.append("isi", topic.body);
-      formData.append("balasan", topic.replies);
-      formData.append("paparan", topic.views);
+    function sendToGoogleSheet(topic){
 
-      return fetch(SHEET_ENDPOINT, {
-        method: "POST",
-        body: formData
-      });
-    }
+    const formData = new FormData();
+
+    formData.append("action","add");
+
+    formData.append("nama",topic.author);
+    formData.append("sekolah",topic.school);
+    formData.append("kategori",topic.category);
+    formData.append("tajuk",topic.title);
+    formData.append("isi",topic.body);
+    formData.append("balasan",topic.replies);
+    formData.append("paparan",topic.views);
+
+    return fetch(SHEET_ENDPOINT,{
+        method:"POST",
+        body:formData
+    });
+
+}
 
     categoryList.addEventListener("click", event => {
       const button = event.target.closest("[data-category]");
@@ -1208,5 +1331,28 @@
     loadTopicsFromGoogleSheet();
  
   </script>
+<div id="loginModal" class="modal">
+
+<div class="modal-box">
+
+<h3>Login Pentadbir</h3>
+
+<input id="adminUser" placeholder="Username">
+
+<input id="adminPass"
+type="password"
+placeholder="Password">
+
+<button onclick="loginAdmin()">
+Login
+</button>
+
+<button onclick="closeLogin()">
+Tutup
+</button>
+
+</div>
+
+</div>
 </body>
 </html>
