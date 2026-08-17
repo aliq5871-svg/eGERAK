@@ -1312,6 +1312,238 @@ margin-bottom:10px;
 }
 </style>
 
+
+<style id="mobile-friendly-front-page">
+/* ===== MUKA DEPAN MESRA TELEFON ===== */
+html, body{
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+}
+
+@media (max-width:720px){
+  .nav{
+    position:sticky;
+    top:0;
+    z-index:100;
+    display:flex;
+    flex-direction:row !important;
+    align-items:center !important;
+    gap:10px;
+    padding:8px 12px !important;
+    min-height:58px;
+  }
+
+  .brand{
+    min-width:0 !important;
+    flex:0 0 auto;
+    gap:7px !important;
+    font-size:.82rem;
+    white-space:nowrap;
+  }
+
+  .brand-badge{
+    width:34px !important;
+    height:34px !important;
+    border-width:2px !important;
+    box-shadow:3px 3px 0 var(--navy) !important;
+    font-size:.75rem;
+  }
+
+  .links{
+    flex:1 1 auto;
+    min-width:0;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    justify-content:flex-start !important;
+    gap:6px !important;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding:2px 2px 5px;
+  }
+
+  .links::-webkit-scrollbar{display:none;}
+
+  .links a,
+  .links .pill-btn{
+    flex:0 0 auto;
+    width:auto !important;
+    min-height:34px !important;
+    padding:7px 10px !important;
+    font-size:.72rem !important;
+    line-height:1;
+    white-space:nowrap;
+    box-shadow:2px 2px 0 var(--navy) !important;
+  }
+
+  /* Poster penuh ikut nisbah asal 1624 × 885 — tiada crop pada telefon */
+  .hero.hero-poster{
+    width:100%;
+    min-height:0 !important;
+    height:calc(100vw * 885 / 1624) !important;
+    aspect-ratio:1624 / 885;
+    background-size:100% 100% !important;
+    background-position:center top !important;
+    background-repeat:no-repeat !important;
+  }
+
+  .poster-overlay{
+    display:none;
+  }
+
+  /* Hotspot QR kekal tidak kelihatan dan tidak mengganggu sentuhan */
+  .hero-poster .poster-qr{
+    pointer-events:none !important;
+  }
+
+  .section{
+    padding:34px 14px !important;
+  }
+
+  .section-head{
+    gap:12px !important;
+    margin-bottom:18px !important;
+  }
+
+  .section h2{
+    font-size:clamp(1.8rem,9vw,2.7rem) !important;
+  }
+
+  .objective-grid{
+    gap:14px !important;
+  }
+
+  .objective{
+    min-height:0 !important;
+    padding:17px !important;
+    border-width:2px !important;
+    border-radius:18px !important;
+    box-shadow:5px 5px 0 var(--navy) !important;
+  }
+
+  .objective h3{
+    font-size:1.08rem !important;
+  }
+
+  .objective p{
+    font-size:.92rem;
+  }
+
+  .toolbar{
+    padding:12px !important;
+    border-radius:17px !important;
+    box-shadow:5px 5px 0 var(--navy) !important;
+  }
+
+  .forum-grid{
+    gap:14px !important;
+  }
+
+  .categories{
+    display:flex !important;
+    overflow-x:auto;
+    gap:8px !important;
+    padding:10px !important;
+    position:static !important;
+    scrollbar-width:none;
+  }
+
+  .categories::-webkit-scrollbar{display:none;}
+
+  .cat-btn{
+    flex:0 0 auto;
+    min-width:130px;
+  }
+
+  .topic-list{
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+    padding-right:0 !important;
+  }
+
+  .topic-card{
+    grid-template-columns:48px minmax(0,1fr) !important;
+    gap:10px !important;
+    padding:14px !important;
+    border-width:2px !important;
+    border-radius:18px !important;
+    box-shadow:5px 5px 0 var(--navy) !important;
+  }
+
+  .avatar{
+    width:46px !important;
+    height:46px !important;
+    border-width:2px !important;
+    box-shadow:3px 3px 0 var(--navy) !important;
+  }
+
+  .topic-card h3{
+    font-size:1.05rem !important;
+  }
+
+  .topic-card p{
+    font-size:.9rem;
+  }
+
+  .topic-stats{
+    grid-column:1 / -1 !important;
+  }
+
+  .join-grid{
+    gap:14px !important;
+  }
+
+  .rules,
+  .composer{
+    padding:17px !important;
+    border-width:2px !important;
+    border-radius:18px !important;
+    box-shadow:5px 5px 0 var(--navy) !important;
+  }
+
+  .rules h2,
+  .composer h2{
+    font-size:1.9rem !important;
+  }
+
+  .form-actions{
+    display:grid !important;
+    grid-template-columns:1fr 1fr;
+  }
+
+  .form-actions .pill-btn{
+    width:100%;
+  }
+
+  .footer{
+    padding:18px 14px !important;
+    font-size:.78rem;
+    line-height:1.45;
+  }
+}
+
+@media (max-width:420px){
+  .brand > span:last-child{
+    max-width:105px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .links a,
+  .links .pill-btn{
+    padding:7px 9px !important;
+    font-size:.68rem !important;
+  }
+
+  .hero.hero-poster{
+    height:calc(100vw * 885 / 1624) !important;
+  }
+}
+</style>
+
 </head>
 <body>
   <div class="page">
