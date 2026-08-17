@@ -2113,7 +2113,7 @@ class="pill-btn">
       { id: "Masa Depan", label: "Masa Depan", icon: "F" }
     ];
 
-    const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycby2DQ_3m41qqblklWzvqGxOMoCcWqmGTKzl6ixN_WUTaVOIik5rinznFPPVYhxac1sK/exec";
+    const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxr_3zwN0KsplegrmdtLfrOW_qTncOSDUPyILQiKdGvxoy0M41TiIl-0-kEKVuelJ6m/exec";
     const GOOGLE_SHEET_ID = "17EFQRecLkYN2Ke57Y1IEpSNTMwjObAfz2r5w4JSRZYE";
     const GOOGLE_SHEET_READ_URL = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json&t=${Date.now()}`;
     let topics = [];
@@ -2278,61 +2278,127 @@ function logout(){
       return String(topic.id || topic.row || topic.title || "topic");
     }
 
+
+    // ===== INTERAKSI LIVE GOOGLE SHEET =====
+    const INTERACTION_POLL_MS = 3000;
+    const CLIENT_ID_KEY = "forumLiveClientId";
+    let interactionState = { likes:{}, liked:{}, comments:{} };
+    let interactionBusy = false;
+
+    function getClientId(){
+      let id = localStorage.getItem(CLIENT_ID_KEY);
+      if(!id){
+        id = (crypto.randomUUID ? crypto.randomUUID() :
+          "c-" + Date.now() + "-" + Math.random().toString(36).slice(2));
+        localStorage.setItem(CLIENT_ID_KEY, id);
+      }
+      return id;
+    }
+
     function getLikes(topic){
-      const data = JSON.parse(localStorage.getItem("forumLikes") || "{}");
-      return Number(data[getInteractionKey(topic)] || 0);
+      return Number(interactionState.likes[getInteractionKey(topic)] || 0);
     }
 
     function hasLiked(topic){
-      const data = JSON.parse(localStorage.getItem("forumLiked") || "{}");
-      return data[getInteractionKey(topic)] === true;
+      return interactionState.liked[getInteractionKey(topic)] === true;
     }
 
     function getComments(topic){
-      const data = JSON.parse(localStorage.getItem("forumComments") || "{}");
-      return Array.isArray(data[getInteractionKey(topic)]) ? data[getInteractionKey(topic)] : [];
+      const list = interactionState.comments[getInteractionKey(topic)];
+      return Array.isArray(list) ? list : [];
     }
 
-    function toggleLike(topicId){
-      const topic = topics.find(t => getInteractionKey(t) === String(topicId));
-      if(!topic) return;
-      const key=getInteractionKey(topic);
-      const likes=JSON.parse(localStorage.getItem("forumLikes") || "{}");
-      const liked=JSON.parse(localStorage.getItem("forumLiked") || "{}");
-      if(liked[key]){
-        likes[key]=Math.max(0,Number(likes[key]||0)-1);
-        liked[key]=false;
-      }else{
-        likes[key]=Number(likes[key]||0)+1;
-        liked[key]=true;
+    async function loadLiveInteractions(){
+      try{
+        const url = `${SHEET_ENDPOINT}?action=interactions&clientId=${encodeURIComponent(getClientId())}&t=${Date.now()}`;
+        const response = await fetch(url, {cache:"no-store"});
+        if(!response.ok) throw new Error("Interaksi live gagal dibaca.");
+        const payload = await response.json();
+
+        if(payload && payload.success){
+          interactionState = {
+            likes: payload.likes || {},
+            liked: payload.liked || {},
+            comments: payload.comments || {}
+          };
+          renderTopics();
+        }
+      }catch(error){
+        console.warn("Live interaction:", error);
       }
-      localStorage.setItem("forumLikes",JSON.stringify(likes));
-      localStorage.setItem("forumLiked",JSON.stringify(liked));
+    }
+
+    async function postInteraction(params){
+      const query = new URLSearchParams(params);
+      const url = `${SHEET_ENDPOINT}?${query.toString()}&_=${Date.now()}`;
+
+      const response = await fetch(url, {
+        method:"GET",
+        cache:"no-store",
+        redirect:"follow"
+      });
+
+      const raw = await response.text();
+      let payload;
+      try {
+        payload = JSON.parse(raw);
+      } catch(e) {
+        console.error("Apps Script response:", raw);
+        throw new Error("Apps Script tidak memulangkan JSON. Pastikan Web App telah di-deploy sebagai versi terbaru.");
+      }
+
+      if(payload && payload.success === false){
+        throw new Error(payload.message || "Interaksi gagal.");
+      }
+
+      return payload;
+    }
+
+    async function toggleLike(topicId){
+      const key = String(topicId);
+      const currentlyLiked = interactionState.liked[key] === true;
+
+      // Optimistic UI.
+      interactionState.liked[key] = !currentlyLiked;
+      interactionState.likes[key] = Math.max(
+        0,
+        Number(interactionState.likes[key] || 0) + (currentlyLiked ? -1 : 1)
+      );
       renderTopics();
+
+      const params = {
+        action: currentlyLiked ? "unlike" : "like",
+        topicId: key,
+        clientId: getClientId()
+      };
+
+      try{
+        await postInteraction(params);
+        await loadLiveInteractions();
+      }catch(error){
+        // Roll back optimistic change.
+        interactionState.liked[key] = currentlyLiked;
+        interactionState.likes[key] = Math.max(
+          0,
+          Number(interactionState.likes[key] || 0) + (currentlyLiked ? 1 : -1)
+        );
+        renderTopics();
+        alert("Suka gagal disimpan.\n\n" + (error?.message || "Ralat tidak diketahui") + "\n\nPastikan Code.gs LIVE sudah di-deploy sebagai New version.");
+      }
     }
 
     function toggleComments(topicId){
       const key = String(topicId);
-      const panelId = `comments-${key}`;
-      let panel = document.getElementById(panelId);
-
-      // Fallback for unusual topic keys that cannot safely be used by getElementById.
-      if(!panel){
-        const panels = topicList.querySelectorAll(".comment-panel");
-        panel = Array.from(panels).find(el => el.id === panelId);
-      }
-
+      const panel = document.getElementById(`comments-${key}`);
       if(panel){
         panel.classList.toggle("open");
         if(panel.classList.contains("open")){
-          setTimeout(() => {
-            panel.scrollIntoView({behavior:"smooth", block:"nearest"});
-          }, 0);
+          setTimeout(()=>panel.scrollIntoView({behavior:"smooth", block:"nearest"}), 0);
         }
       }
     }
 
-    function submitComment(topicId){
+    async function submitComment(topicId){
       const key = String(topicId);
       const nameEl = document.getElementById(`comment-name-${key}`);
       const textEl = document.getElementById(`comment-text-${key}`);
@@ -2344,34 +2410,44 @@ function logout(){
         return;
       }
 
-      const topic = topics.find(t => getInteractionKey(t) === key);
-      if(!topic) return;
+      const params = {
+        action:"comment",
+        topicId:key,
+        clientId:getClientId(),
+        name:name,
+        comment:text
+      };
 
-      const data = JSON.parse(localStorage.getItem("forumComments") || "{}");
-      if(!Array.isArray(data[key])) data[key] = [];
+      const button = document.querySelector(
+        `button[data-interaction="submit-comment"][data-topic-key="${CSS.escape(key)}"]`
+      );
+      if(button) button.disabled = true;
 
-      data[key].push({
-        name,
-        text,
-        time:new Date().toLocaleString("ms-MY")
-      });
+      try{
+        await postInteraction(params);
+        if(nameEl) nameEl.value = "";
+        if(textEl) textEl.value = "";
+        await loadLiveInteractions();
 
-      localStorage.setItem("forumComments", JSON.stringify(data));
-
-      renderTopics();
-
-      setTimeout(() => {
-        const panel = document.getElementById(`comments-${key}`);
-        if(panel){
-          panel.classList.add("open");
-          panel.scrollIntoView({behavior:"smooth", block:"nearest"});
-        }
-      }, 0);
+        setTimeout(()=>{
+          const panel = document.getElementById(`comments-${key}`);
+          if(panel){
+            panel.classList.add("open");
+            panel.scrollIntoView({behavior:"smooth", block:"nearest"});
+          }
+        }, 0);
+      }catch(error){
+        alert("Komen tidak dapat disimpan.\n\nSebab: " + (error?.message || "Ralat tidak diketahui") + "\n\nPastikan Web App Apps Script telah di-deploy sebagai New version.");
+      }finally{
+        if(button) button.disabled = false;
+      }
     }
 
     function renderComments(topic){
-      const comments=getComments(topic);
-      if(!comments.length) return '<div class="comment-empty">Belum ada komen. Jadilah yang pertama memberi pandangan.</div>';
+      const comments = getComments(topic);
+      if(!comments.length){
+        return '<div class="comment-empty">Belum ada komen. Jadilah yang pertama memberi pandangan.</div>';
+      }
       return comments.map(comment=>`
         <div class="comment-item">
           <strong>${escapeHtml(comment.name)}</strong>
@@ -2541,7 +2617,11 @@ ${isAdmin ? `
 
   return {
 
-    id: pick(row, ["id", "timestamp", "tarikh"], String(index + 1)),
+    id: (() => {
+      const rawId = pick(row, ["id", "timestamp", "tarikh"], "");
+      const parsed = new Date(rawId);
+      return !isNaN(parsed.getTime()) ? String(parsed.getTime()) : String(rawId || (index + 1));
+    })(),
 
     row: index + 2,
 
@@ -2618,6 +2698,8 @@ window.onload = function(){
     updateLoginUI();
 
     loadTopicsFromGoogleSheet();
+    loadLiveInteractions();
+    setInterval(loadLiveInteractions, INTERACTION_POLL_MS);
 
 };
     function sendToGoogleSheet(topic){
