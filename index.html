@@ -2192,6 +2192,35 @@ function logout(){
     // ===== INTERAKSI TOPIK: EVENT DELEGATION =====
     // Tidak bergantung kepada onclick inline, jadi butang Komen kekal berfungsi
     // walaupun senarai topik di-render semula secara dinamik.
+    // Simpan draf komen setiap kali pengguna menaip.
+    // Ini mengelakkan polling LIVE daripada memadam teks yang sedang ditaip.
+    topicList.addEventListener("input", function(event){
+      const target = event.target;
+      if(!target.matches('input[id^="comment-name-"], textarea[id^="comment-text-"]')) return;
+
+      const prefixName = "comment-name-";
+      const prefixText = "comment-text-";
+      let key = "";
+
+      if(target.id.startsWith(prefixName)){
+        key = target.id.slice(prefixName.length);
+      }else if(target.id.startsWith(prefixText)){
+        key = target.id.slice(prefixText.length);
+      }
+
+      if(!key) return;
+
+      if(!commentDrafts[key]) commentDrafts[key] = {};
+
+      if(target.id.startsWith(prefixName)){
+        commentDrafts[key].name = target.value;
+      }else{
+        commentDrafts[key].comment = target.value;
+      }
+
+      openCommentTopicId = key;
+    });
+
     topicList.addEventListener("click", function(event){
       const button = event.target.closest("button[data-interaction]");
       if(!button || !topicList.contains(button)) return;
@@ -2210,6 +2239,17 @@ function logout(){
         submitComment(key);
       }
     });
+    // Ctrl+Enter / Cmd+Enter menghantar komen dengan cepat.
+    topicList.addEventListener("keydown", function(event){
+      if(event.key !== "Enter" || !(event.ctrlKey || event.metaKey)) return;
+      const textarea = event.target.closest('textarea[id^="comment-text-"]');
+      if(!textarea) return;
+
+      event.preventDefault();
+      const key = textarea.id.replace("comment-text-", "");
+      submitComment(key);
+    });
+
     const searchInput = document.getElementById("searchInput");
     const sortSelect = document.getElementById("sortSelect");
     const topicForm = document.getElementById("topicForm");
@@ -2283,6 +2323,8 @@ function logout(){
     const INTERACTION_POLL_MS = 3000;
     const CLIENT_ID_KEY = "forumLiveClientId";
     let interactionState = { likes:{}, liked:{}, comments:{} };
+    let openCommentTopicId = null;
+    let commentDrafts = {};
     let interactionBusy = false;
 
     function getClientId(){
@@ -2390,11 +2432,21 @@ function logout(){
     function toggleComments(topicId){
       const key = String(topicId);
       const panel = document.getElementById(`comments-${key}`);
-      if(panel){
-        panel.classList.toggle("open");
-        if(panel.classList.contains("open")){
-          setTimeout(()=>panel.scrollIntoView({behavior:"smooth", block:"nearest"}), 0);
-        }
+      if(!panel) return;
+
+      const willOpen = !panel.classList.contains("open");
+      panel.classList.toggle("open", willOpen);
+
+      if(willOpen){
+        openCommentTopicId = key;
+        commentDrafts[key] = commentDrafts[key] || {};
+        setTimeout(() => {
+          panel.scrollIntoView({behavior:"smooth", block:"nearest"});
+          const input = document.getElementById(`comment-name-${key}`);
+          if(input) input.focus();
+        }, 50);
+      } else if(openCommentTopicId === key){
+        openCommentTopicId = null;
       }
     }
 
@@ -2403,43 +2455,62 @@ function logout(){
       const nameEl = document.getElementById(`comment-name-${key}`);
       const textEl = document.getElementById(`comment-text-${key}`);
       const name = (nameEl?.value || "").trim();
-      const text = (textEl?.value || "").trim();
+      const comment = (textEl?.value || "").trim();
 
-      if(!name || !text){
-        alert("Sila isi nama dan komen.");
+      if(!name){
+        alert("Sila masukkan nama.");
+        nameEl?.focus();
         return;
       }
-
-      const params = {
-        action:"comment",
-        topicId:key,
-        clientId:getClientId(),
-        name:name,
-        comment:text
-      };
+      if(!comment){
+        alert("Sila tulis komen.");
+        textEl?.focus();
+        return;
+      }
 
       const button = document.querySelector(
         `button[data-interaction="submit-comment"][data-topic-key="${CSS.escape(key)}"]`
       );
       if(button) button.disabled = true;
 
+      const originalText = button ? button.textContent : "";
+      if(button) button.textContent = " Menyimpan...";
+
       try{
-        await postInteraction(params);
+        await postInteraction({
+          action: "comment",
+          topicId: key,
+          clientId: getClientId(),
+          name: name,
+          comment: comment
+        });
+
+        // Hanya kosongkan selepas server mengesahkan berjaya.
         if(nameEl) nameEl.value = "";
         if(textEl) textEl.value = "";
+        delete commentDrafts[key];
+        openCommentTopicId = key;
+
         await loadLiveInteractions();
 
-        setTimeout(()=>{
+        setTimeout(() => {
           const panel = document.getElementById(`comments-${key}`);
           if(panel){
             panel.classList.add("open");
             panel.scrollIntoView({behavior:"smooth", block:"nearest"});
           }
-        }, 0);
+        }, 50);
+
       }catch(error){
-        alert("Komen tidak dapat disimpan.\n\nSebab: " + (error?.message || "Ralat tidak diketahui") + "\n\nPastikan Web App Apps Script telah di-deploy sebagai New version.");
+        alert(
+          "Komen tidak dapat disimpan.\n\n" +
+          (error?.message || "Ralat tidak diketahui")
+        );
       }finally{
-        if(button) button.disabled = false;
+        if(button){
+          button.disabled = false;
+          button.textContent = originalText || "Hantar";
+        }
       }
     }
 
@@ -2458,6 +2529,24 @@ function logout(){
     }
 
     function renderTopics() {
+      // Simpan fokus + nilai semasa sebelum LIVE refresh membina semula DOM.
+      const active = document.activeElement;
+      const activeId = active && active.id ? active.id : null;
+      const activeStart = active && typeof active.selectionStart === "number" ? active.selectionStart : null;
+      const activeEnd = active && typeof active.selectionEnd === "number" ? active.selectionEnd : null;
+
+      if(activeId && activeId.startsWith("comment-name-")){
+        const key = activeId.slice("comment-name-".length);
+        commentDrafts[key] = commentDrafts[key] || {};
+        commentDrafts[key].name = active.value;
+        openCommentTopicId = key;
+      }else if(activeId && activeId.startsWith("comment-text-")){
+        const key = activeId.slice("comment-text-".length);
+        commentDrafts[key] = commentDrafts[key] || {};
+        commentDrafts[key].comment = active.value;
+        openCommentTopicId = key;
+      }
+
       if (isLoadingTopics) {
         topicList.innerHTML = '<div class="empty">Sedang mengambil data daripada Google Sheet...</div>';
         return;
@@ -2535,6 +2624,40 @@ ${isAdmin ? `
 ` : ""}
         </article>
       `).join("");
+
+      // Kekalkan panel komen dan teks yang sedang ditaip walaupun data LIVE refresh.
+      list.forEach(topic => {
+        const key = getInteractionKey(topic);
+        const panel = document.getElementById(`comments-${key}`);
+        if(panel && openCommentTopicId === String(key)){
+          panel.classList.add("open");
+        }
+      });
+
+      Object.keys(commentDrafts).forEach(key => {
+        const draft = commentDrafts[key] || {};
+        const nameEl = document.getElementById(`comment-name-${key}`);
+        const textEl = document.getElementById(`comment-text-${key}`);
+        if(nameEl && draft.name !== undefined) nameEl.value = draft.name;
+        if(textEl && draft.comment !== undefined) textEl.value = draft.comment;
+      });
+
+      // Pulihkan fokus dan kedudukan cursor supaya pengguna boleh terus menaip.
+      if(activeId){
+        const fresh = document.getElementById(activeId);
+        if(fresh){
+          requestAnimationFrame(() => {
+            fresh.focus({preventScroll:true});
+            if(activeStart !== null && typeof fresh.setSelectionRange === "function"){
+              const max = fresh.value.length;
+              fresh.setSelectionRange(
+                Math.min(activeStart, max),
+                Math.min(activeEnd === null ? activeStart : activeEnd, max)
+              );
+            }
+          });
+        }
+      }
     }
 
     function setCategory(id) {
