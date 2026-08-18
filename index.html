@@ -1962,6 +1962,101 @@ button,
     min-height:44px;
   }
 }
+
+/* =========================================================
+   MOBILE NAVIGATION - SEMUA MENU SENTIASA NAMPAK
+   ========================================================= */
+@media (max-width: 720px){
+  .nav{
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:8px !important;
+    padding:8px 10px !important;
+  }
+
+  .brand{
+    width:100% !important;
+    min-width:0 !important;
+    justify-content:center !important;
+    gap:7px !important;
+    font-size:.9rem !important;
+  }
+
+  .brand-badge{
+    width:34px !important;
+    height:34px !important;
+    flex:0 0 34px !important;
+    box-shadow:2px 2px 0 var(--navy) !important;
+  }
+
+  .links{
+    width:100% !important;
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:6px !important;
+    justify-content:stretch !important;
+    align-items:stretch !important;
+  }
+
+  .links a,
+  .links .pill-btn{
+    width:100% !important;
+    min-width:0 !important;
+    min-height:38px !important;
+    height:38px !important;
+    padding:5px 4px !important;
+    margin:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    font-size:.72rem !important;
+    line-height:1 !important;
+    box-shadow:2px 2px 0 var(--navy) !important;
+  }
+}
+
+@media (max-width: 420px){
+  .nav{
+    padding:7px 8px !important;
+  }
+
+  .brand{
+    font-size:.82rem !important;
+  }
+
+  .brand-badge{
+    width:30px !important;
+    height:30px !important;
+    flex-basis:30px !important;
+  }
+
+  .links{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:5px !important;
+  }
+
+  .links a,
+  .links .pill-btn{
+    min-height:36px !important;
+    height:36px !important;
+    font-size:.67rem !important;
+    padding:4px 2px !important;
+    border-width:2px !important;
+  }
+}
+
+/* Bila hanya 1–2 menu pada baris terakhir, pastikan tetap kemas. */
+@media (max-width:720px){
+  .links #logoutBtn,
+  .links #loginBtn{
+    min-width:0 !important;
+  }
+}
+
 </style>
 
 </head>
